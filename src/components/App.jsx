@@ -14,6 +14,9 @@ export class App extends Component {
     filter: '',
   };
 
+  lokalStorageKey = "phonebook";
+  //czy to właściwe umieszczenie stałej?
+
   addContact = newContact => {
     this.setState(prevState => ({
       contacts: [...prevState.contacts, newContact],
@@ -32,6 +35,27 @@ export class App extends Component {
       };
     });
   };
+
+  componentDidMount() {
+    const { contacts } = this.state;
+    try {
+      const contactsListJSON = localStorage.getItem(this.lokalStorageKey);
+      const contactsList = contactsListJSON === null ? contacts : JSON.parse(contactsListJSON);
+      this.setState({ contacts: contactsList });
+    } catch (error) {
+      console.error("Get state error: ", error.message);
+    }
+  }
+
+  componentDidUpdate() {
+    const { contacts} = this.state;
+    try {
+      const updatedContacts = JSON.stringify(contacts);
+      localStorage.setItem(this.lokalStorageKey, updatedContacts);
+    } catch (error) {
+      console.error("Set state error: ", error.message);
+    }
+  }
 
   render() {
     const { contacts, filter } = this.state;
